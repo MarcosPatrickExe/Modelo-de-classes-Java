@@ -1,0 +1,82 @@
+class ThreadSincronizada2 implements Runnable{
+    private Thread t;
+	private ThreadTiqueTaque ttt; 
+    
+	ThreadSincronizada2(String non, ThreadTiqueTaque ttt){
+		//this.nome=non;
+		this.ttt=ttt;
+		t = new Thread(this, non);
+	    t.start();
+	}
+	
+	ThreadSincronizada2(){}
+	
+	@Override
+	public void run() {
+		if(t.getName().equals("tique")) {
+			for(int a=0;a<5;a++) {
+               ttt.tique(true);}	
+			ttt.tique(false);
+			System.out.println("Thread tique finalizada");
+		}else {
+			for(int a=0;a<5;a++) {
+	           ttt.taque(true);}	
+		    ttt.taque(false);
+		    System.out.println("Thread taque finalizada");
+		}
+	} 
+	
+	class ThreadTiqueTaque{
+		boolean tique; //marcador de situação da thread
+		
+		synchronized void tique(boolean estaExecutando){
+		    if(!estaExecutando) {
+		    	tique=true;
+		    	notify();
+		    	return; // retorna para o metodo run para encerrar a execução
+		    }
+		    System.out.print("tique  ");
+		    tique=true;
+		    notify(); //notifica a próxima thread que esta irá parar de ser executada e permite a execução da 
+		    // outra que está em espera
+		    
+		    while(tique) {
+		    	try {  wait(); //põe a thread em espera até receber uma notificação da outra
+		    	   } catch (InterruptedException e) {e.printStackTrace();}	
+		    	}
+		 }
+		
+		
+		synchronized void taque(boolean estaExecutando) {
+			if(!estaExecutando) {
+		    	tique=false;
+		    	notify();
+		    	return;
+		    }
+		    System.out.println("taque ");
+		    tique=false;
+		    notify();
+		    
+		    while(!tique) {
+		    	try {  wait(); } catch (InterruptedException e) {e.printStackTrace();}
+		    }
+		  }
+	    }
+		
+		//Rodando:
+		public static void main(String[] args) { //iniciando o código
+			ThreadTiqueTaque ttt = new ThreadSincronizada2().new ThreadTiqueTaque();
+			
+		     new ThreadSincronizada2("tique",ttt);
+		    
+		     /* ThreadSincronizada2 td1 = new ThreadSincronizada2();
+		       try {  
+		   	td1.t.join(); se isso for usado, o processo pára pois a thread 'tique' vai ficar à espera de 'taque',
+		       sendo que 'taque' está esperando tique terminar para ser executada;
+		     
+		        td2.t.join();
+	             } catch (InterruptedException e) {}
+		    */
+		     new ThreadSincronizada2("taque",ttt);
+		   }  
+}
