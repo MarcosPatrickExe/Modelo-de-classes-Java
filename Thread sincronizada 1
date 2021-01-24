@@ -1,0 +1,49 @@
+class ThreadSincronizada implements Runnable{
+    private String nome;
+    private short[] num;
+    private static Calculadora calc = new ThreadSincronizada().new Calculadora();
+    //um objeto estático só instancia uma classe uma vez, portanto cada uma das threads usarão ele por vez.
+	
+	ThreadSincronizada(String n, short[] v){
+		this.nome =n;
+		this.num = v;
+		
+		new Thread(this).start();
+	}
+	
+	ThreadSincronizada(){}
+	
+	@Override
+    public void run() {
+       System.out.println(this.nome+" iniciada \n");
+       int soma=calc.somaArray(this.num); 
+       System.out.println("Resultado da soma para a thread "+this.nome+" é : "+soma);
+       try {
+		Thread.sleep(500);
+	   } catch (InterruptedException e) {e.printStackTrace();}
+       
+       System.out.println(this.nome+" finalizada.");
+    }
+	
+	 private class Calculadora{
+		//static final int a=6; toda variável dentro de uma classe interna estatica tem que ser estatica
+		 synchronized int somaArray(short[] num) {
+		    int total=0; 
+			for(short a : num) {
+				total += Integer.valueOf(a);
+			}
+			System.out.println(nome+"\n");
+			return total;
+		} 
+	}
+	 
+	 
+	 //Rodando:
+	 public static void main(String[] args) {
+			
+			short[] var = {4,6,5,8,9,56,23,2};
+			
+			new ThreadSincronizada("Thread #1", var);
+			new ThreadSincronizada("Thread #2", var);
+		}
+}

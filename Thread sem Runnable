@@ -1,0 +1,39 @@
+class MinhaThread extends Thread{ //primeira forma de usar uma Thread é instanciado sua classe-pai
+     private String nome;
+	 
+	 public MinhaThread(String n, int t) {
+		 this.nome=n;
+
+		 
+	//	new Thread().start(); OU:
+		start(); 
+		//Dá início a Thread, executando o método 'run'
+	 }
+	 
+	 @Override
+	 public void run() { //o método 'run' é o corpo da Thread
+	   try {
+		   for(int j=0;j<6;j++) {
+			   System.out.println(nome+" contador "+j);
+			   Thread.sleep(500); //pausa a thread por um tempo determinado, de por exemplo 500 milissegundos 
+		   }
+		   
+	   }catch(InterruptedException e) {
+		   e.printStackTrace(); // o método 'sleep' pode lançar uma exception, por isso o catch
+	   }	 
+	   System.out.println(nome+" encerrando... ");
+	 }
+	 
+	 public static void main(String[] args) {
+		 
+	   /* Diferentes de loops normais, que funcionam com dependência do compilador - ou seja, só permite
+		 que o compilador leia o resto do código após executar todo o loop-, as Threads funcionam
+		 independentemente do compilador, isso é, enquanto o compilador está lendo o código elas rodam
+		 ao mesmo tempo que ele e com outras Threads */
+		 
+		 new MinhaThread("Thread #1",500);
+		 new MinhaThread("Thread #2",500);
+		 new MinhaThread("Thread #3",500);
+		 
+	 }
+}
